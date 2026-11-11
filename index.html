@@ -1,0 +1,862 @@
+<title>AI-ideeënfunnel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: navy kopband met funnel-samenvatting, daaronder tabbladen (Funnel-bord / Prioriteiten / Matrix) op een lichtgrijze werkvloer. Huisstijl Luiten Food: navy + groen, hoekig, Oswald-titels. */
+:root{
+  --bg:#F4F5F6; --surface:#FFFFFF; --ink:#022D4E; --muted:#5A7488; --line:#E1E4E5; --line-strong:#C5CCCD;
+  --band:#022D4E; --band-ink:#FFFFFF; --band-muted:#99ABB9;
+  --green:#98CD50; --green-deep:#3EA448; --green-ink:#1F6B27; --tint:#F1F8E7;
+  --warn:#B86E00; --warn-tint:#FFF4E0; --danger:#C0392B; --danger-tint:#FBEAE8;
+  --s1:#99ABB9; --s2:#668196; --s3:#335773; --s4:#80B635; --s5:#62B15E; --s6:#3EA448; --s0:#C5CCCD;
+  --q-quick:#E3F1CF; --q-quick-ink:#2E6B12; --q-big:#DCE6EE; --q-big-ink:#022D4E; --q-small:#F4F5F6; --q-small-ink:#4B6478; --q-re:#FBEDE3; --q-re-ink:#8A4A16;
+  --shadow:0 2px 12px rgba(2,45,78,.08); --shadow-raised:0 8px 28px rgba(2,45,78,.16);
+  --font-display:'Oswald','Bebas Neue',Impact,'Arial Narrow',sans-serif;
+  --font-body:'Source Sans 3','Source Sans Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#06192A; --surface:#0C2740; --ink:#E6EDF2; --muted:#93A9BA; --line:#18374F; --line-strong:#2B4C66;
+  --band:#011423; --band-ink:#FFFFFF; --band-muted:#8EA3B4;
+  --green:#98CD50; --green-deep:#6CC06A; --green-ink:#A9DB72; --tint:#132F22;
+  --warn:#F0A63A; --warn-tint:#33260F; --danger:#EF7B6E; --danger-tint:#3A1C1A;
+  --s1:#8EA3B4; --s2:#6F92AE; --s3:#4F7FA6; --s4:#98CD50; --s5:#79C474; --s6:#4FB85A; --s0:#3A5870;
+  --q-quick:#1D3A1A; --q-quick-ink:#B8E08A; --q-big:#16354F; --q-big-ink:#CFE0EE; --q-small:#132C42; --q-small-ink:#A3B7C7; --q-re:#3A2618; --q-re-ink:#F2B98B;
+  --shadow:0 2px 12px rgba(0,0,0,.35); --shadow-raised:0 8px 28px rgba(0,0,0,.5);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#06192A; --surface:#0C2740; --ink:#E6EDF2; --muted:#93A9BA; --line:#18374F; --line-strong:#2B4C66;
+  --band:#011423; --band-ink:#FFFFFF; --band-muted:#8EA3B4;
+  --green:#98CD50; --green-deep:#6CC06A; --green-ink:#A9DB72; --tint:#132F22;
+  --warn:#F0A63A; --warn-tint:#33260F; --danger:#EF7B6E; --danger-tint:#3A1C1A;
+  --s1:#8EA3B4; --s2:#6F92AE; --s3:#4F7FA6; --s4:#98CD50; --s5:#79C474; --s6:#4FB85A; --s0:#3A5870;
+  --q-quick:#1D3A1A; --q-quick-ink:#B8E08A; --q-big:#16354F; --q-big-ink:#CFE0EE; --q-small:#132C42; --q-small-ink:#A3B7C7; --q-re:#3A2618; --q-re-ink:#F2B98B;
+  --shadow:0 2px 12px rgba(0,0,0,.35); --shadow-raised:0 8px 28px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.eyebrow{font-family:var(--font-display);font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+
+/* Kopband */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{padding-block:28px 32px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:40px;align-items:start}
+.intro .eyebrow{color:var(--green)}
+.intro h1{font-size:clamp(32px,4.4vw,46px);font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin-top:8px}
+.intro h1::after{content:"";display:block;width:56px;height:3px;background:var(--green);margin-top:14px}
+.intro p{color:var(--band-muted);max-width:46ch;margin:14px 0 0}
+.intro-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px}
+.sync{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--band-muted)}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--band-muted);display:inline-block}
+.sync[data-mode="shared"] i{background:var(--green)}
+.sync[data-mode="local"] i,.sync[data-mode="demo"] i{background:#F0A63A}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;padding:10px 18px;font-family:var(--font-display);font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:14px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-primary{background:var(--green);color:#022D4E}
+.btn-primary:hover{background:var(--green-deep);color:#fff}
+.btn-ghost{background:transparent;color:inherit;border:1px solid currentColor;padding:9px 16px}
+.btn-ghost:hover{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.band .btn-ghost:hover{background:#fff;color:#022D4E;border-color:#fff}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);padding:9px 16px}
+.btn-danger.armed{background:var(--danger);color:#fff}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* Funnel-grafiek */
+.funnel{display:grid;gap:6px}
+.funnel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.funnel-head .eyebrow{color:var(--band-muted)}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--band-muted)}
+.stats b{color:var(--band-ink);font-family:var(--font-display);font-weight:600;font-size:18px;margin-right:4px}
+.frow{width:100%;display:grid;grid-template-columns:120px minmax(0,1fr) 36px;align-items:center;gap:12px;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:var(--band-ink)}
+.frow:hover .fbar{filter:brightness(1.08)}
+.frow:hover .flabel{color:var(--green)}
+.flabel{font-family:var(--font-display);font-size:14px;letter-spacing:.05em;text-transform:uppercase;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftrack{height:30px;display:flex;justify-content:center;align-items:center;background:rgba(255,255,255,.05)}
+.fbar{height:100%;min-width:3px;transition:width .4s cubic-bezier(.25,.1,.25,1)}
+.fcount{font-family:var(--font-display);font-size:18px;font-weight:600;text-align:right}
+.frow.parked{opacity:.75}
+.frow.parked .ftrack{background:transparent;border:1px dashed rgba(255,255,255,.18)}
+
+/* Notities */
+.notice{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;padding:12px 16px;margin-top:20px;border-left:3px solid var(--warn);background:var(--warn-tint);font-size:15px}
+.notice.info{border-left-color:var(--green-deep);background:var(--tint)}
+
+/* Tabs + filters */
+.toolbar{display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between;margin-top:24px;border-bottom:1px solid var(--line-strong)}
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tab{border:0;background:none;padding:12px 14px 10px;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.06em;font-size:15px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green)}
+.tab:hover{color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-bottom:10px}
+.field-inline{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.input,.select,textarea{background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:8px 10px;min-height:38px;width:100%}
+.input:focus,.select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 35%,transparent)}
+.filters .input{width:200px}
+.filters .select{width:auto}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
+.check input{accent-color:var(--green-deep);width:16px;height:16px}
+
+main{padding-block:20px 56px}
+.view-intro{color:var(--muted);font-size:15px;margin:0 0 16px;max-width:80ch}
+
+/* Bord */
+.board-scroll{overflow-x:auto;padding-bottom:8px}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:14px;min-width:min-content}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.col-head{border-top:4px solid var(--stage);padding-top:10px}
+.col-head h3{font-size:17px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.col-head p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.35;min-height:2.7em}
+.col.flash .col-head{background:var(--tint)}
+.col-empty{border:1px dashed var(--line-strong);padding:14px;font-size:14px;color:var(--muted);text-align:center}
+.card{background:var(--surface);box-shadow:var(--shadow);padding:12px 14px;display:grid;gap:8px;cursor:pointer;transition:box-shadow .15s,transform .15s;min-width:0}
+.card:hover{box-shadow:var(--shadow-raised);transform:translateY(-2px)}
+.card h4{font-family:var(--font-body);font-size:16px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.card-top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.card .next{font-size:14px;color:var(--muted);margin:0;line-height:1.4;overflow-wrap:anywhere}
+.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.card-foot .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.age.stale{color:var(--warn);font-weight:600}
+.moves{display:flex;gap:4px;flex-shrink:0}
+.mv{width:28px;height:28px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:grid;place-items:center;font-size:16px;line-height:1;padding:0}
+.mv:hover:not([disabled]){background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.mv[disabled]{opacity:.3;cursor:default}
+
+.chip{font-size:12px;font-weight:600;letter-spacing:.02em;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.prio{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.q-quick{background:var(--q-quick);color:var(--q-quick-ink)}
+.q-big{background:var(--q-big);color:var(--q-big-ink)}
+.q-small{background:var(--q-small);color:var(--q-small-ink);border:1px solid var(--line)}
+.q-re{background:var(--q-re);color:var(--q-re-ink)}
+.stage-pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;white-space:nowrap}
+.stage-pill i{width:10px;height:10px;background:var(--stage);display:inline-block}
+
+/* Tabel */
+.table-scroll{overflow-x:auto;background:var(--surface);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:880px;font-size:15px}
+th{font-family:var(--font-display);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--muted);text-align:left;padding:12px 12px;border-bottom:2px solid var(--line-strong);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--tint)}
+td.rank{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--muted);width:44px}
+td.title b{display:block}
+td.title span{font-size:13px;color:var(--muted)}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:8px;height:8px;background:var(--line-strong);display:inline-block}
+.dots.imp i.on{background:var(--green-deep)}
+.dots.eff i.on{background:var(--s3)}
+.score{font-family:var(--font-display);font-weight:600;font-size:18px}
+.table-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+
+/* Matrix */
+.matrix-scroll{overflow-x:auto}
+.matrix{display:grid;grid-template-columns:34px repeat(5,minmax(110px,1fr));grid-template-rows:repeat(5,minmax(92px,auto)) 34px;gap:3px;min-width:620px}
+.mcell{padding:6px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mcell.q-quick,.mcell.q-big,.mcell.q-small,.mcell.q-re{border:0}
+.mdot{font-size:12.5px;line-height:1.25;background:var(--surface);border-left:3px solid var(--stage);padding:4px 6px;cursor:pointer;box-shadow:var(--shadow);overflow-wrap:anywhere;text-align:left;border-top:0;border-right:0;border-bottom:0;color:var(--ink)}
+.mdot:hover{box-shadow:var(--shadow-raised)}
+.maxis{font-family:var(--font-display);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:.04em}
+.maxis.y{writing-mode:vertical-rl;transform:rotate(180deg)}
+.qlabel{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:600;opacity:.85}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;display:inline-block}
+.axis-title{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:8px 0 0 37px;min-width:583px}
+
+/* Leeg */
+.empty{background:var(--surface);box-shadow:var(--shadow);padding:32px;display:grid;gap:12px;justify-items:start;max-width:720px}
+.empty h3{font-size:24px;text-transform:uppercase}
+.empty p{margin:0;color:var(--muted)}
+.empty ol{margin:0;padding-left:20px;color:var(--muted)}
+
+/* Dialoog */
+dialog{border:0;padding:0;background:var(--surface);color:var(--ink);width:min(720px,calc(100vw - 32px));max-height:calc(100dvh - 32px);box-shadow:var(--shadow-raised)}
+dialog::backdrop{background:rgba(2,45,78,.6)}
+.dlg-head{background:var(--band);color:var(--band-ink);padding:18px 22px;display:flex;justify-content:space-between;align-items:start;gap:12px;position:sticky;top:0;z-index:1}
+.dlg-head h2{font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.dlg-head .eyebrow{color:var(--green)}
+.x{background:none;border:0;color:inherit;font-size:26px;line-height:1;cursor:pointer;padding:0 4px}
+.dlg-body{padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.f{display:grid;gap:5px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label,.f .lbl{font-size:13px;font-weight:700;letter-spacing:.02em}
+.f .hint{font-size:12.5px;color:var(--muted)}
+textarea{min-height:84px;resize:vertical}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.scale input{position:absolute;opacity:0;pointer-events:none}
+.scale label{border:1px solid var(--line-strong);padding:6px 4px;text-align:center;cursor:pointer;font-weight:600;font-size:13px;display:grid;line-height:1.2}
+.scale label small{font-weight:400;font-size:11.5px;color:var(--muted)}
+.scale input:checked+label{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.scale input:checked+label small{color:inherit;opacity:.8}
+.scale input:focus-visible+label{outline:2px solid var(--green);outline-offset:1px}
+.prio-preview{grid-column:1/-1;display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--bg);font-size:14px;flex-wrap:wrap}
+.history{grid-column:1/-1;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px}
+.history b{color:var(--ink);font-weight:600}
+.dlg-foot{padding:14px 22px 20px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.dlg-foot div{display:flex;gap:10px;flex-wrap:wrap}
+.err{color:var(--danger);font-size:13px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 18px;font-size:15px;box-shadow:var(--shadow-raised);z-index:50;max-width:calc(100vw - 32px)}
+
+@media (max-width:900px){
+  .band .wrap{grid-template-columns:1fr;gap:26px}
+}
+@media (max-width:600px){
+  .dlg-body{grid-template-columns:1fr}
+  .frow{grid-template-columns:96px minmax(0,1fr) 30px;gap:8px}
+  .flabel{font-size:12.5px}
+  .filters .input{width:100%}
+  .filters{width:100%}
+  .board{grid-auto-columns:minmax(240px,82vw)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <div class="intro">
+      <div class="eyebrow">Luiten Food · AI-implementatie</div>
+      <h1>AI-ideeënfunnel</h1>
+      <p>Elk AI-idee dat binnen de organisatie wordt geopperd, met de fase waarin het zit, wie het oppakt en hoe het scoort op impact en inspanning.</p>
+      <div class="intro-actions">
+        <button class="btn btn-primary" id="btn-new" type="button">+ Idee indienen</button>
+        <span class="sync" id="sync" data-mode="connecting"><i></i><span id="sync-text">Verbinden met gedeelde lijst…</span></span>
+      </div>
+    </div>
+    <section class="funnel" aria-label="Aantal ideeën per fase">
+      <div class="funnel-head">
+        <span class="eyebrow">Ideeën per fase</span>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div id="funnel"></div>
+    </section>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="notice"></div>
+  <div class="toolbar">
+    <div class="tabs" role="tablist" aria-label="Weergave">
+      <button class="tab" role="tab" id="tab-funnel" data-view="funnel" type="button">Funnel-bord</button>
+      <button class="tab" role="tab" id="tab-prioriteiten" data-view="prioriteiten" type="button">Prioriteitenlijst</button>
+      <button class="tab" role="tab" id="tab-matrix" data-view="matrix" type="button">Impact × inspanning</button>
+    </div>
+    <div class="filters">
+      <input class="input" id="q" type="search" placeholder="Zoek op titel, eigenaar…" aria-label="Zoeken">
+      <select class="select" id="dept-filter" aria-label="Afdeling"></select>
+      <label class="check"><input type="checkbox" id="show-parked"> Toon geparkeerd</label>
+    </div>
+  </div>
+  <main id="view"></main>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <form id="idea-form" novalidate>
+    <div class="dlg-head">
+      <div><div class="eyebrow" id="dlg-eyebrow">Nieuw idee</div><h2 id="dlg-title">Idee indienen</h2></div>
+      <button class="x" type="button" id="dlg-close" aria-label="Sluiten">×</button>
+    </div>
+    <div class="dlg-body">
+      <div class="f full"><label for="f-title">Titel *</label><input class="input" id="f-title" maxlength="120" placeholder="Bijv. Inkoopfacturen automatisch inlezen"><span class="err" id="f-title-err" hidden>Geef het idee een titel.</span></div>
+      <div class="f full"><label for="f-desc">Wat is het probleem of de kans?</label><textarea id="f-desc" maxlength="2000" placeholder="Welk werk kost nu veel tijd, wat gaat er mis, wat zou AI kunnen doen?"></textarea></div>
+      <div class="f"><label for="f-dept">Afdeling</label><select class="select" id="f-dept"></select></div>
+      <div class="f"><label for="f-stage">Fase</label><select class="select" id="f-stage"></select></div>
+      <div class="f"><label for="f-by">Ingediend door</label><input class="input" id="f-by" maxlength="80"></div>
+      <div class="f"><label for="f-owner">Eigenaar (trekker)</label><input class="input" id="f-owner" maxlength="80" placeholder="Wie pakt het op?"></div>
+      <div class="f full">
+        <span class="lbl" id="lbl-imp">Impact: wat levert het op?</span>
+        <div class="scale" role="radiogroup" aria-labelledby="lbl-imp" id="f-impact"></div>
+      </div>
+      <div class="f full">
+        <span class="lbl" id="lbl-eff">Inspanning: hoeveel werk is het?</span>
+        <div class="scale" role="radiogroup" aria-labelledby="lbl-eff" id="f-effort"></div>
+      </div>
+      <div class="prio-preview" id="prio-preview"></div>
+      <div class="f"><label for="f-tool">AI-tool of oplossing</label><input class="input" id="f-tool" maxlength="80" placeholder="Bijv. Claude, Copilot, maatwerk"></div>
+      <div class="f"><label for="f-next">Volgende stap</label><input class="input" id="f-next" maxlength="160" placeholder="Bijv. Demo plannen met Finance"></div>
+      <div class="f full" id="parked-wrap" hidden><label for="f-reason">Reden geparkeerd</label><input class="input" id="f-reason" maxlength="200" placeholder="Bijv. Wacht op nieuw ERP-systeem"></div>
+      <div class="history" id="f-history"></div>
+    </div>
+    <div class="dlg-foot">
+      <div><button class="btn btn-danger" type="button" id="btn-delete" hidden>Verwijderen</button></div>
+      <div><button class="btn btn-ghost" type="button" id="btn-cancel">Annuleren</button><button class="btn btn-primary" type="submit" id="btn-save">Opslaan</button></div>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+"use strict";
+
+const STAGES = [
+  { id: "ingediend",     name: "Ingediend",     hint: "Idee is geopperd en vastgelegd",                          color: "var(--s1)" },
+  { id: "beoordeling",   name: "Beoordeling",   hint: "Waarde, haalbaarheid, data en AVG worden bekeken",       color: "var(--s2)" },
+  { id: "geprioriteerd", name: "Geprioriteerd", hint: "Goedgekeurd, wacht op capaciteit om te starten",         color: "var(--s3)" },
+  { id: "pilot",         name: "Pilot",         hint: "Proef met een kleine groep gebruikers",                  color: "var(--s4)" },
+  { id: "implementatie", name: "Implementatie", hint: "Uitrol, training en borging in het werkproces",           color: "var(--s5)" },
+  { id: "live",          name: "In gebruik",    hint: "Draait in de praktijk, resultaat wordt gemeten",         color: "var(--s6)" },
+];
+const PARKED = { id: "geparkeerd", name: "Geparkeerd", hint: "Gestopt of on hold, met reden", color: "var(--s0)" };
+const ALL_STAGES = [...STAGES, PARKED];
+const STAGE = Object.fromEntries(ALL_STAGES.map((s) => [s.id, s]));
+const DEPTS = ["Inkoop", "Verkoop", "Customer service", "Logistiek", "Kwaliteit", "Operatie", "Finance", "HR", "Marketing", "IT", "Directie", "Overig"];
+const IMPACT = ["Minimaal", "Beperkt", "Merkbaar", "Groot", "Zeer groot"];
+const EFFORT = ["Uren", "Dagen", "Weken", "Maanden", "Kwartalen"];
+const QUAD = {
+  quick: { label: "Quick win",            cls: "q-quick", desc: "veel impact, weinig werk" },
+  big:   { label: "Strategisch project",  cls: "q-big",   desc: "veel impact, veel werk" },
+  small: { label: "Kleine verbetering",   cls: "q-small", desc: "beperkte impact, weinig werk" },
+  re:    { label: "Heroverwegen",         cls: "q-re",    desc: "beperkte impact, veel werk" },
+};
+const STALE_DAYS = 45;
+const DAY = 86400000;
+
+// Voorbeeldideeën: alleen voor de voorbeeldweergave, nooit opgeslagen.
+const SAMPLE = (() => {
+  const now = Date.now();
+  const mk = (n, title, dept, stage, impact, effort, next, ageDays, extra = {}) => ({
+    id: "voorbeeld-" + n, title, dept, stage, impact, effort, nextStep: next,
+    description: "", submittedBy: "Afdeling " + dept, owner: "", tool: "",
+    createdAt: new Date(now - (ageDays + 20) * DAY).toISOString(),
+    stageSince: new Date(now - ageDays * DAY).toISOString(),
+    updatedAt: new Date(now - ageDays * DAY).toISOString(),
+    history: [{ stage, at: new Date(now - ageDays * DAY).toISOString() }], ...extra,
+  });
+  return [
+    mk(1, "Inkoopfacturen automatisch inlezen en matchen met orders", "Finance", "implementatie", 4, 3, "Training crediteurenadministratie", 12),
+    mk(2, "AI-assistent voor vragen over leverstatus", "Customer service", "pilot", 4, 2, "Evaluatie pilot met 3 medewerkers", 20),
+    mk(3, "Specificaties en allergenen uit leveranciersdocumenten halen", "Kwaliteit", "beoordeling", 5, 3, "Check welke documenten AVG-gevoelig zijn", 9),
+    mk(4, "Prijslijsten vertalen naar alle websitetalen", "Marketing", "live", 3, 1, "Maandelijks tijdwinst meten", 60),
+    mk(5, "Vraagvoorspelling wild en gevogelte in het seizoen", "Inkoop", "geprioriteerd", 5, 5, "Data-export verkoophistorie aanvragen", 30),
+    mk(6, "Actiepunten uit overleggen automatisch samenvatten", "Directie", "live", 2, 1, "", 90),
+    mk(7, "Orders uit e-mail direct in het ERP zetten", "Verkoop", "beoordeling", 5, 4, "Gesprek met ERP-leverancier", 52),
+    mk(8, "Routeplanning cruiseleveringen optimaliseren", "Logistiek", "ingediend", 3, 4, "Eerste gesprek met planning", 4),
+    mk(9, "Concepten voor vacatureteksten", "HR", "ingediend", 2, 1, "", 2),
+    mk(10, "Verloopdata van certificaten (MSC, ASC, Bio) bewaken", "Kwaliteit", "geprioriteerd", 4, 2, "Inplannen na pilot leverstatus", 15),
+    mk(11, "Productteksten webshop genereren", "Marketing", "geparkeerd", 3, 2, "", 40, { parkedReason: "Wacht op nieuwe website" }),
+    mk(12, "Patronen herkennen in klachtenregistratie", "Kwaliteit", "ingediend", 3, 2, "Klachtenexport van afgelopen jaar ophalen", 6),
+  ];
+})();
+
+const state = {
+  mode: "connecting",   // connecting | shared | local
+  demo: false,
+  ideas: [],
+  demoIdeas: [],
+  loaded: false,
+  stale: false,
+  canWrite: true,
+  db: null,
+  view: "funnel",
+  q: "",
+  dept: "",
+  showParked: false,
+  sort: "score",
+  editing: null,
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const clamp15 = (n) => Math.min(5, Math.max(1, Math.round(Number(n) || 3)));
+
+function lsGet(k, fallback) { try { const v = localStorage.getItem(k); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+// ---------- Prioriteit ----------
+const score = (i) => clamp15(i.impact) * (6 - clamp15(i.effort));
+function quad(i) {
+  const hi = clamp15(i.impact) >= 4, low = clamp15(i.effort) <= 2;
+  return hi && low ? QUAD.quick : hi ? QUAD.big : low ? QUAD.small : QUAD.re;
+}
+function daysIn(i) { const t = Date.parse(i.stageSince || i.createdAt); return isNaN(t) ? 0 : Math.max(0, Math.floor((Date.now() - t) / DAY)); }
+function ageLabel(d) { return d === 0 ? "vandaag" : d === 1 ? "1 dag" : d + " dagen"; }
+const isStale = (i) => i.stage !== "live" && i.stage !== "geparkeerd" && daysIn(i) >= STALE_DAYS;
+const fmtDate = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" }); };
+
+// ---------- Data ----------
+function normalize(raw, id) {
+  const stage = STAGE[raw.stage] ? raw.stage : "ingediend";
+  return {
+    id: id || raw.id,
+    title: String(raw.title || "Zonder titel").slice(0, 120),
+    description: String(raw.description || ""),
+    dept: DEPTS.includes(raw.dept) ? raw.dept : "Overig",
+    stage,
+    impact: clamp15(raw.impact),
+    effort: clamp15(raw.effort),
+    submittedBy: String(raw.submittedBy || ""),
+    owner: String(raw.owner || ""),
+    tool: String(raw.tool || ""),
+    nextStep: String(raw.nextStep || ""),
+    parkedReason: String(raw.parkedReason || ""),
+    createdAt: raw.createdAt || new Date().toISOString(),
+    updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString(),
+    stageSince: raw.stageSince || raw.createdAt || new Date().toISOString(),
+    history: Array.isArray(raw.history) ? raw.history.filter((h) => h && STAGE[h.stage]).slice(-40) : [],
+  };
+}
+const currentIdeas = () => (state.demo ? state.demoIdeas : state.ideas);
+
+function newId() {
+  const r = Math.random().toString(36).slice(2, 8);
+  return "idee-" + Date.now().toString(36) + "-" + r;
+}
+
+async function persist(idea) {
+  if (state.demo) {
+    const list = state.demoIdeas.filter((x) => x.id !== idea.id);
+    state.demoIdeas = [...list, idea];
+    renderAll();
+    return;
+  }
+  if (state.mode === "shared") {
+    const body = JSON.parse(JSON.stringify(idea));
+    delete body.id;
+    try {
+      await state.db.collection("ideas").doc(idea.id).set(body);
+    } catch (e) {
+      if (e && e.code === "invalid_argument") { state.canWrite = false; renderAll(); }
+      throw e;
+    }
+    return;
+  }
+  state.ideas = [...state.ideas.filter((x) => x.id !== idea.id), idea];
+  lsSet("aifunnel.ideas", state.ideas);
+  renderAll();
+}
+
+async function removeIdea(id) {
+  if (state.demo) { state.demoIdeas = state.demoIdeas.filter((x) => x.id !== id); renderAll(); return; }
+  if (state.mode === "shared") { await state.db.collection("ideas").doc(id).delete(); return; }
+  state.ideas = state.ideas.filter((x) => x.id !== id);
+  lsSet("aifunnel.ideas", state.ideas);
+  renderAll();
+}
+
+function errText(e) {
+  const c = e && e.code;
+  if (c === "invalid_argument") return "Opslaan lukte niet: je hebt alleen leesrechten op deze lijst.";
+  if (c === "quota_exceeded") return "De lijst zit vol. Verwijder oude ideeën om nieuwe toe te voegen.";
+  if (c === "resource_exhausted") return "Even te veel tegelijk. Probeer het over een paar seconden opnieuw.";
+  return "Opslaan lukte niet. Controleer je verbinding en probeer het opnieuw.";
+}
+
+async function moveStage(id, dir) {
+  const i = currentIdeas().find((x) => x.id === id);
+  if (!i) return;
+  const idx = STAGES.findIndex((s) => s.id === i.stage);
+  let next;
+  if (i.stage === "geparkeerd") next = dir > 0 ? (i.history.slice().reverse().find((h) => h.stage !== "geparkeerd")?.stage || "ingediend") : null;
+  else next = STAGES[idx + dir]?.id;
+  if (!next) return;
+  const now = new Date().toISOString();
+  const upd = { ...i, stage: next, stageSince: now, updatedAt: now, history: [...i.history, { stage: next, at: now }].slice(-40) };
+  try { await persist(upd); toast("“" + trunc(i.title, 40) + "” staat nu in " + STAGE[next].name); }
+  catch (e) { toast(errText(e)); }
+}
+const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
+
+// ---------- Verbinding ----------
+async function connect() {
+  const hasHost = !!(window.claude && typeof window.claude.use === "function");
+  if (!hasHost) return goLocal();
+  let db = null;
+  try { db = await window.claude.use("db"); } catch { db = null; }
+  if (!db) return goLocal();
+  state.db = db;
+  state.mode = "shared";
+  renderStatus();
+  try {
+    const user = await window.claude.use("user");
+    if (user && typeof user.can === "function") {
+      const c = await user.can("data.write");
+      if (c === false) state.canWrite = false;
+    }
+  } catch {}
+  const timer = setTimeout(() => { state.stale = true; renderAll(); }, 10000);
+  db.collection("ideas").onSnapshot(
+    (snap) => {
+      state.ideas = snap.docs.filter((d) => d.exists).map((d) => normalize(d.data() || {}, d.id));
+      state.loaded = true;
+      if (!snap.metadata.fromCache) { clearTimeout(timer); state.stale = false; }
+      renderAll();
+    },
+    (err) => {
+      clearTimeout(timer);
+      state.loaded = true;
+      state.stale = true;
+      if (err && err.code === "revoked") state.canWrite = false;
+      renderAll();
+    }
+  );
+  renderAll();
+}
+function goLocal() {
+  state.mode = "local";
+  state.ideas = (lsGet("aifunnel.ideas", []) || []).map((x) => normalize(x, x.id));
+  state.loaded = true;
+  renderAll();
+}
+
+// ---------- Filters ----------
+function visible(list) {
+  const q = state.q.trim().toLowerCase();
+  return list.filter((i) => {
+    if (state.dept && i.dept !== state.dept) return false;
+    if (q && ![i.title, i.description, i.owner, i.submittedBy, i.tool, i.nextStep, i.dept].join(" ").toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+const byPrio = (a, b) => score(b) - score(a) || b.impact - a.impact || a.title.localeCompare(b.title, "nl");
+
+// ---------- Render ----------
+function renderStatus() {
+  const el = $("#sync"), t = $("#sync-text");
+  const mode = state.demo ? "demo" : state.mode;
+  el.dataset.mode = mode;
+  t.textContent =
+    mode === "demo" ? "Voorbeeldweergave, niets wordt opgeslagen" :
+    mode === "shared" ? (state.stale ? "Gedeelde lijst, mogelijk niet actueel" : "Gedeelde lijst, live bijgewerkt") :
+    mode === "local" ? "Alleen opgeslagen in deze browser" : "Verbinden met gedeelde lijst…";
+  $("#btn-new").hidden = !state.canWrite && !state.demo;
+}
+
+function renderFunnel() {
+  const all = visible(currentIdeas());
+  const counts = Object.fromEntries(ALL_STAGES.map((s) => [s.id, 0]));
+  all.forEach((i) => counts[i.stage]++);
+  const max = Math.max(1, ...STAGES.map((s) => counts[s.id]), counts.geparkeerd);
+  const row = (s, parked) => {
+    const n = counts[s.id];
+    const w = n === 0 ? 0 : Math.max(4, (n / max) * 100);
+    return `<button class="frow${parked ? " parked" : ""}" type="button" data-jump="${s.id}" title="${esc(s.hint)}">
+      <span class="flabel">${esc(s.name)}</span>
+      <span class="ftrack"><span class="fbar" style="width:${w}%;background:${s.color}"></span></span>
+      <span class="fcount num">${n}</span></button>`;
+  };
+  $("#funnel").innerHTML = STAGES.map((s) => row(s, false)).join("") + row(PARKED, true);
+  const active = all.filter((i) => i.stage !== "live" && i.stage !== "geparkeerd");
+  const quick = active.filter((i) => quad(i) === QUAD.quick).length;
+  const stale = active.filter(isStale).length;
+  $("#stats").innerHTML =
+    `<span><b class="num">${all.length}</b>ideeën</span>` +
+    `<span><b class="num">${active.length}</b>in behandeling</span>` +
+    `<span><b class="num">${quick}</b>quick wins open</span>` +
+    (stale ? `<span><b class="num" style="color:#F0A63A">${stale}</b>stil &gt; ${STALE_DAYS} dagen</span>` : "");
+}
+
+function renderNotice() {
+  const el = $("#notice");
+  if (state.demo) {
+    el.innerHTML = `<div class="notice"><span><b>Voorbeeldweergave.</b> Deze ideeën zijn verzonnen om te laten zien hoe de funnel werkt. Wijzigingen worden niet bewaard.</span><button class="btn btn-ghost" type="button" data-act="exit-demo">Sluit voorbeeld</button></div>`;
+  } else if (state.mode === "local") {
+    el.innerHTML = `<div class="notice"><span>Deze lijst staat alleen in jouw browser. Open de gedeelde link om samen met collega’s één funnel bij te houden.</span></div>`;
+  } else if (state.mode === "shared" && !state.canWrite) {
+    el.innerHTML = `<div class="notice info"><span>Je kunt de funnel bekijken, maar geen ideeën toevoegen of wijzigen. Vraag de eigenaar om je bijdragerrechten te geven.</span></div>`;
+  } else if (state.mode === "shared" && state.stale) {
+    el.innerHTML = `<div class="notice"><span>De gedeelde lijst reageert nog niet. Wat je ziet is mogelijk niet actueel.</span></div>`;
+  } else el.innerHTML = "";
+}
+
+function stagePill(id) { const s = STAGE[id]; return `<span class="stage-pill" style="--stage:${s.color}"><i></i>${esc(s.name)}</span>`; }
+function prioBadge(i) { const q = quad(i); return `<span class="prio ${q.cls}" title="${esc(q.desc)}">${q.label} · <span class="num">${score(i)}</span></span>`; }
+
+function renderEmpty() {
+  const writeable = state.canWrite;
+  return `<div class="empty">
+    <span class="eyebrow" style="color:var(--green-deep)">${state.loaded ? "Nog geen ideeën" : "Lijst laden…"}</span>
+    <h3>Begin met het eerste idee</h3>
+    <p>Iedereen kan een AI-idee indienen. Het start in de fase <b>Ingediend</b> en schuift door naar Beoordeling, Geprioriteerd, Pilot, Implementatie en uiteindelijk In gebruik.</p>
+    <ol><li>Dien een idee in met een korte omschrijving.</li><li>Schat impact en inspanning in; daaruit volgt de prioriteitsscore.</li><li>Verplaats het idee door de funnel zodra het een stap verder is.</li></ol>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+      ${writeable ? `<button class="btn btn-primary" type="button" data-act="new">+ Idee indienen</button>` : ""}
+      <button class="btn btn-ghost" type="button" data-act="demo">Bekijk met voorbeeldideeën</button>
+    </div></div>`;
+}
+
+function renderBoard(list) {
+  const stages = state.showParked ? ALL_STAGES : STAGES;
+  const canMove = state.canWrite || state.demo;
+  const cols = stages.map((s) => {
+    const items = list.filter((i) => i.stage === s.id).sort(byPrio);
+    const idx = STAGES.findIndex((x) => x.id === s.id);
+    const cards = items.map((i) => {
+      const d = daysIn(i), st = isStale(i);
+      const back = s.id === "geparkeerd" ? null : STAGES[idx - 1];
+      const fwd = s.id === "geparkeerd" ? { name: "vorige fase" } : STAGES[idx + 1];
+      return `<article class="card" data-open="${esc(i.id)}" tabindex="0" aria-label="${esc(i.title)}">
+        <div class="card-top"><span class="chip">${esc(i.dept)}</span>${prioBadge(i)}</div>
+        <h4>${esc(i.title)}</h4>
+        ${s.id === "geparkeerd" && i.parkedReason ? `<p class="next">Reden: ${esc(i.parkedReason)}</p>` : i.nextStep ? `<p class="next">→ ${esc(i.nextStep)}</p>` : ""}
+        <div class="card-foot">
+          <span class="who">${esc(i.owner || "Geen eigenaar")}</span>
+          <span class="age num${st ? " stale" : ""}" title="${st ? "Al lang niet verder gekomen" : "Tijd in deze fase"}">${ageLabel(d)}</span>
+          ${canMove ? `<span class="moves">
+            <button class="mv" type="button" data-move="-1" data-id="${esc(i.id)}" ${back ? `aria-label="Terug naar ${esc(back.name)}"` : "disabled aria-label=\"Geen vorige fase\""}>‹</button>
+            <button class="mv" type="button" data-move="1" data-id="${esc(i.id)}" ${fwd ? `aria-label="Door naar ${esc(fwd.name)}"` : "disabled aria-label=\"Laatste fase\""}>›</button>
+          </span>` : ""}
+        </div></article>`;
+    }).join("");
+    return `<section class="col" id="col-${s.id}" style="--stage:${s.color}">
+      <div class="col-head"><h3><span>${esc(s.name)}</span><span class="num">${items.length}</span></h3><p>${esc(s.hint)}</p></div>
+      ${cards || `<div class="col-empty">Geen ideeën in deze fase</div>`}
+    </section>`;
+  }).join("");
+  return `<p class="view-intro">Elke kolom is een fase. Kaarten staan op prioriteit; schuif een idee met ‹ › naar de vorige of volgende fase. Oranje dagen betekent: al meer dan ${STALE_DAYS} dagen geen voortgang.</p>
+    <div class="board-scroll"><div class="board">${cols}</div></div>`;
+}
+
+function dots(n, cls) { return `<span class="dots ${cls}" aria-label="${n} van 5">${[1,2,3,4,5].map((k) => `<i class="${k <= n ? "on" : ""}"></i>`).join("")}</span>`; }
+
+function priorityRows(list) {
+  const open = list.filter((i) => state.showParked ? i.stage !== "live" : i.stage !== "live" && i.stage !== "geparkeerd");
+  const sorters = {
+    score: byPrio,
+    stage: (a, b) => ALL_STAGES.findIndex((s) => s.id === b.stage) - ALL_STAGES.findIndex((s) => s.id === a.stage) || byPrio(a, b),
+    age: (a, b) => daysIn(b) - daysIn(a) || byPrio(a, b),
+  };
+  return open.sort(sorters[state.sort] || byPrio);
+}
+
+function renderPriorities(list) {
+  const rows = priorityRows(list);
+  const body = rows.map((i, n) => `<tr data-open="${esc(i.id)}" tabindex="0">
+    <td class="rank num">${n + 1}</td>
+    <td class="title"><b>${esc(i.title)}</b><span>${esc(i.dept)}${i.owner ? " · " + esc(i.owner) : ""}</span></td>
+    <td>${stagePill(i.stage)}</td>
+    <td>${dots(i.impact, "imp")}</td>
+    <td>${dots(i.effort, "eff")}</td>
+    <td><span class="score num">${score(i)}</span></td>
+    <td>${prioBadge(i).replace(/ · <span class="num">\d+<\/span>/, "")}</td>
+    <td class="num${isStale(i) ? " age stale" : ""}">${ageLabel(daysIn(i))}</td>
+    <td>${esc(i.nextStep || "–")}</td>
+  </tr>`).join("");
+  return `<div class="table-actions">
+      <p class="view-intro" style="margin:0">Alle open ideeën (nog niet in gebruik). Score = impact × (6 − inspanning), van 1 tot 25.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <label class="field-inline" for="sort">Sorteer op
+          <select class="select" id="sort" style="width:auto">
+            <option value="score"${state.sort === "score" ? " selected" : ""}>Prioriteitsscore</option>
+            <option value="stage"${state.sort === "stage" ? " selected" : ""}>Verst in de funnel</option>
+            <option value="age"${state.sort === "age" ? " selected" : ""}>Langst in fase</option>
+          </select></label>
+        <button class="btn btn-ghost" type="button" data-act="copy">Kopieer voor Excel</button>
+      </div></div>
+    <div class="table-scroll"><table>
+      <thead><tr><th>#</th><th>Idee</th><th>Fase</th><th>Impact</th><th>Inspanning</th><th>Score</th><th>Type</th><th>In fase</th><th>Volgende stap</th></tr></thead>
+      <tbody>${body || `<tr><td colspan="9" style="color:var(--muted);cursor:default">Geen open ideeën met deze filters.</td></tr>`}</tbody>
+    </table></div>`;
+}
+
+function renderMatrix(list) {
+  const items = list.filter((i) => state.showParked || i.stage !== "geparkeerd");
+  let cells = "";
+  for (let imp = 5; imp >= 1; imp--) {
+    cells += `<div class="maxis num" title="Impact ${imp}">${imp}</div>`;
+    for (let eff = 1; eff <= 5; eff++) {
+      const q = quad({ impact: imp, effort: eff });
+      const here = items.filter((i) => i.impact === imp && i.effort === eff).sort(byPrio);
+      const corner = (imp === 5 && (eff === 1 || eff === 5)) || (imp === 1 && (eff === 1 || eff === 5));
+      cells += `<div class="mcell ${q.cls}">${corner ? `<span class="qlabel">${q.label}</span>` : ""}
+        ${here.map((i) => `<button class="mdot" type="button" data-open="${esc(i.id)}" style="--stage:${STAGE[i.stage].color}" title="${esc(STAGE[i.stage].name)}">${esc(trunc(i.title, 60))}</button>`).join("")}</div>`;
+    }
+  }
+  cells += `<div></div>` + EFFORT.map((e, k) => `<div class="maxis">${k + 1} · ${e}</div>`).join("");
+  return `<p class="view-intro">Rechtsboven het meeste werk, linksboven de quick wins. De gekleurde rand geeft de fase aan.</p>
+    <div class="matrix-scroll">
+      <div style="display:flex;gap:6px;align-items:stretch">
+        <div class="maxis y" style="width:18px">Impact →</div>
+        <div style="min-width:0;flex:1"><div class="matrix">${cells}</div>
+        <div class="axis-title"><span></span><span>Inspanning →</span><span></span></div></div>
+      </div>
+    </div>
+    <div class="legend">${STAGES.map((s) => `<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("")}${state.showParked ? `<span><i style="background:${PARKED.color}"></i>Geparkeerd</span>` : ""}</div>`;
+}
+
+function renderView() {
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === state.view)));
+  const all = currentIdeas();
+  const main = $("#view");
+  if (!all.length) { main.innerHTML = renderEmpty(); return; }
+  const list = visible(all);
+  main.innerHTML = state.view === "prioriteiten" ? renderPriorities(list) : state.view === "matrix" ? renderMatrix(list) : renderBoard(list);
+}
+
+function renderAll() { renderStatus(); renderFunnel(); renderNotice(); renderView(); }
+
+// ---------- Dialoog ----------
+const dlg = $("#dlg");
+function buildForm() {
+  $("#f-dept").innerHTML = DEPTS.map((d) => `<option>${esc(d)}</option>`).join("");
+  $("#f-stage").innerHTML = ALL_STAGES.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join("");
+  const scale = (name, labels) => labels.map((l, k) => `<input type="radio" name="${name}" id="${name}-${k + 1}" value="${k + 1}"><label for="${name}-${k + 1}"><span class="num">${k + 1}</span><small>${l}</small></label>`).join("");
+  $("#f-impact").innerHTML = scale("impact", IMPACT);
+  $("#f-effort").innerHTML = scale("effort", EFFORT);
+  $("#dept-filter").innerHTML = `<option value="">Alle afdelingen</option>` + DEPTS.map((d) => `<option>${esc(d)}</option>`).join("");
+}
+function radioVal(name) { const r = document.querySelector(`input[name="${name}"]:checked`); return r ? Number(r.value) : 3; }
+function updatePreview() {
+  const tmp = { impact: radioVal("impact"), effort: radioVal("effort") };
+  const q = quad(tmp);
+  $("#prio-preview").innerHTML = `<span>Prioriteit:</span>${prioBadge(tmp)}<span style="color:var(--muted)">${q.desc}</span>`;
+  $("#parked-wrap").hidden = $("#f-stage").value !== "geparkeerd";
+}
+function openIdea(id) {
+  const i = id ? currentIdeas().find((x) => x.id === id) : null;
+  state.editing = i ? i.id : null;
+  const ro = !state.canWrite && !state.demo;
+  $("#dlg-eyebrow").textContent = i ? STAGE[i.stage].name + " · " + i.dept : "Nieuw idee";
+  $("#dlg-title").textContent = i ? (ro ? i.title : "Idee bijwerken") : "Idee indienen";
+  $("#f-title").value = i ? i.title : "";
+  $("#f-desc").value = i ? i.description : "";
+  $("#f-dept").value = i ? i.dept : (state.dept || "Overig");
+  $("#f-stage").value = i ? i.stage : "ingediend";
+  $("#f-by").value = i ? i.submittedBy : (lsGet("aifunnel.me", "") || "");
+  $("#f-owner").value = i ? i.owner : "";
+  $("#f-tool").value = i ? i.tool : "";
+  $("#f-next").value = i ? i.nextStep : "";
+  $("#f-reason").value = i ? i.parkedReason : "";
+  $(`#impact-${i ? i.impact : 3}`).checked = true;
+  $(`#effort-${i ? i.effort : 3}`).checked = true;
+  $("#f-title-err").hidden = true;
+  $("#f-history").innerHTML = i ? `<span>Ingediend <b>${esc(fmtDate(i.createdAt))}</b></span>` +
+    i.history.slice(-6).map((h) => `<span>${esc(STAGE[h.stage].name)} <b>${esc(fmtDate(h.at))}</b></span>`).join("") : "";
+  const del = $("#btn-delete");
+  del.hidden = !i || ro; del.classList.remove("armed"); del.textContent = "Verwijderen";
+  $("#btn-save").hidden = ro;
+  $("#btn-cancel").textContent = ro ? "Sluiten" : "Annuleren";
+  dlg.querySelectorAll("input,textarea,select").forEach((el) => { el.disabled = ro; });
+  updatePreview();
+  if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+  if (!ro) setTimeout(() => $("#f-title").focus(), 30);
+}
+function closeDlg() { if (dlg.open) dlg.close(); state.editing = null; }
+
+$("#idea-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const title = $("#f-title").value.trim();
+  if (!title) { $("#f-title-err").hidden = false; $("#f-title").focus(); return; }
+  const prev = state.editing ? currentIdeas().find((x) => x.id === state.editing) : null;
+  const now = new Date().toISOString();
+  const stage = $("#f-stage").value;
+  const stageChanged = !prev || prev.stage !== stage;
+  const idea = normalize({
+    ...(prev || {}),
+    id: prev ? prev.id : newId(),
+    title, description: $("#f-desc").value.trim(), dept: $("#f-dept").value, stage,
+    impact: radioVal("impact"), effort: radioVal("effort"),
+    submittedBy: $("#f-by").value.trim(), owner: $("#f-owner").value.trim(),
+    tool: $("#f-tool").value.trim(), nextStep: $("#f-next").value.trim(),
+    parkedReason: stage === "geparkeerd" ? $("#f-reason").value.trim() : (prev ? prev.parkedReason : ""),
+    createdAt: prev ? prev.createdAt : now, updatedAt: now,
+    stageSince: stageChanged ? now : prev.stageSince,
+    history: stageChanged ? [...(prev ? prev.history : []), { stage, at: now }] : prev.history,
+  });
+  if (!prev && idea.submittedBy) lsSet("aifunnel.me", idea.submittedBy);
+  const btn = $("#btn-save"); btn.disabled = true; btn.textContent = "Opslaan…";
+  try {
+    await persist(idea);
+    closeDlg();
+    toast(prev ? "Idee bijgewerkt" : "Idee ingediend in " + STAGE[stage].name);
+  } catch (e) { toast(errText(e)); }
+  finally { btn.disabled = false; btn.textContent = "Opslaan"; }
+});
+$("#btn-delete").addEventListener("click", async (ev) => {
+  const b = ev.currentTarget;
+  if (!b.classList.contains("armed")) { b.classList.add("armed"); b.textContent = "Zeker weten? Klik nogmaals"; return; }
+  const id = state.editing;
+  try { await removeIdea(id); closeDlg(); toast("Idee verwijderd"); } catch (e) { toast(errText(e)); }
+});
+$("#dlg-close").addEventListener("click", closeDlg);
+$("#btn-cancel").addEventListener("click", closeDlg);
+dlg.addEventListener("close", () => { state.editing = null; });
+dlg.addEventListener("change", (e) => { if (e.target.name === "impact" || e.target.name === "effort" || e.target.id === "f-stage") updatePreview(); });
+
+// ---------- Interactie ----------
+let toastTimer;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
+
+function setView(v) {
+  state.view = ["funnel", "prioriteiten", "matrix"].includes(v) ? v : "funnel";
+  renderView();
+}
+function copyTable() {
+  const rows = priorityRows(visible(currentIdeas()));
+  const head = ["Rang", "Idee", "Afdeling", "Fase", "Impact", "Inspanning", "Score", "Type", "Eigenaar", "Dagen in fase", "Volgende stap"];
+  const clean = (s) => String(s ?? "").replace(/[\t\r\n]+/g, " ");
+  const tsv = [head, ...rows.map((i, n) => [n + 1, i.title, i.dept, STAGE[i.stage].name, i.impact, i.effort, score(i), quad(i).label, i.owner, daysIn(i), i.nextStep])]
+    .map((r) => r.map(clean).join("\t")).join("\n");
+  const done = () => toast(rows.length + " ideeën gekopieerd. Plak ze in Excel.");
+  try {
+    navigator.clipboard.writeText(tsv).then(done, () => fallbackCopy(tsv, done));
+  } catch { fallbackCopy(tsv, done); }
+}
+function fallbackCopy(text, done) {
+  const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch {}
+  ta.remove();
+  ok ? done() : toast("Kopiëren lukte niet in deze weergave.");
+}
+
+document.addEventListener("click", (e) => {
+  const mv = e.target.closest("[data-move]");
+  if (mv) { e.stopPropagation(); if (!mv.disabled) moveStage(mv.dataset.id, Number(mv.dataset.move)); return; }
+  const op = e.target.closest("[data-open]");
+  if (op) { openIdea(op.dataset.open); return; }
+  const tab = e.target.closest(".tab");
+  if (tab) { location.hash = tab.dataset.view; setView(tab.dataset.view); return; }
+  const jump = e.target.closest("[data-jump]");
+  if (jump) {
+    const id = jump.dataset.jump;
+    if (id === "geparkeerd" && !state.showParked) { state.showParked = true; $("#show-parked").checked = true; }
+    if (state.view !== "funnel") { location.hash = "funnel"; state.view = "funnel"; }
+    renderView();
+    const col = document.getElementById("col-" + id);
+    if (col) {
+      col.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest", inline: "center" });
+      col.classList.add("flash"); setTimeout(() => col.classList.remove("flash"), 1200);
+    }
+    return;
+  }
+  const act = e.target.closest("[data-act]");
+  if (act) {
+    const a = act.dataset.act;
+    if (a === "new") openIdea(null);
+    if (a === "demo") { state.demo = true; state.demoIdeas = SAMPLE.map((x) => normalize(x, x.id)); renderAll(); }
+    if (a === "exit-demo") { state.demo = false; renderAll(); }
+    if (a === "copy") copyTable();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-open]") && e.target.tagName !== "BUTTON") { e.preventDefault(); openIdea(e.target.dataset.open); }
+});
+$("#btn-new").addEventListener("click", () => openIdea(null));
+$("#q").addEventListener("input", (e) => { state.q = e.target.value; renderFunnel(); renderView(); });
+$("#dept-filter").addEventListener("change", (e) => { state.dept = e.target.value; lsSet("aifunnel.dept", state.dept); renderFunnel(); renderView(); });
+$("#show-parked").addEventListener("change", (e) => { state.showParked = e.target.checked; lsSet("aifunnel.parked", state.showParked); renderView(); });
+document.addEventListener("change", (e) => { if (e.target.id === "sort") { state.sort = e.target.value; renderView(); } });
+window.addEventListener("hashchange", () => setView(location.hash.slice(1)));
+
+// ---------- Start ----------
+buildForm();
+state.dept = lsGet("aifunnel.dept", "") || "";
+state.showParked = !!lsGet("aifunnel.parked", false);
+$("#dept-filter").value = state.dept;
+$("#show-parked").checked = state.showParked;
+state.view = ["funnel", "prioriteiten", "matrix"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "funnel";
+renderAll();
+setInterval(() => { if (!dlg.open) renderView(); }, 60 * 60 * 1000);
+connect();
+})();
+</script>
