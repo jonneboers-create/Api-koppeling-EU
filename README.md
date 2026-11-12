@@ -1,39 +1,17 @@
-# AI-ideeënfunnel
+# API-koppeling-EU
 
-Overzicht van alle AI-ideeën binnen Luiten Food: in welke fase een idee zit, wie het oppakt en hoe het scoort op impact en inspanning.
+Koppelingen met openbare gegevens van de EU en de Douane over invoer van voedingsmiddelen.
 
-**Live (gedeeld):** https://claude.ai/artifact/BXTKunuiyL1WPjLKtLJDFX
+| Map | Wat | Status |
+|---|---|---|
+| [`agridata-import/`](agridata-import/README.md) | Haalt de wekelijkse EU-invoer van pluimvee (TAXUD) op uit de API van het Agri-food data portal van de Europese Commissie, voor het dashboard [EU-import pluimvee](https://claude.ai/artifact/Wn5mewCbed4e9MJ291mvpc). | Klaar. De API van de Commissie was op 12-11-2026 tijdelijk buiten werking, dus het dashboard toont nog voorbeeldcijfers. |
+| [`douane-agent/`](douane-agent/README.md) | Agent die invoerkosten en tariefcontingenten (TRQ) opzoekt in het Gebruikstarief van de Douane (tarief.douane.nl). | Werkt nog niet: de server van de Douane weigert verzoeken die niet uit een browser komen. |
 
-## Fasen
+Voor Claude Code staat er ook een agent `douane-tarief` in `.claude/agents/`.
 
-| Fase | Betekenis |
-|---|---|
-| Ingediend | Idee is geopperd en vastgelegd |
-| Beoordeling | Waarde, haalbaarheid, data en AVG worden bekeken |
-| Geprioriteerd | Goedgekeurd, wacht op capaciteit om te starten |
-| Pilot | Proef met een kleine groep gebruikers |
-| Implementatie | Uitrol, training en borging in het werkproces |
-| In gebruik | Draait in de praktijk, resultaat wordt gemeten |
-| Geparkeerd | Gestopt of on hold, met reden (zijspoor) |
+## Tests
 
-## Prioriteit
-
-Per idee worden **impact** (1 minimaal – 5 zeer groot) en **inspanning** (1 uren – 5 kwartalen) ingeschat.
-
-- **Score** = impact × (6 − inspanning), van 1 tot 25
-- **Quick win**: impact ≥ 4 en inspanning ≤ 2
-- **Strategisch project**: impact ≥ 4 en inspanning ≥ 3
-- **Kleine verbetering**: impact ≤ 3 en inspanning ≤ 2
-- **Heroverwegen**: impact ≤ 3 en inspanning ≥ 3
-
-Ideeën die langer dan 45 dagen in dezelfde fase staan (behalve In gebruik en Geparkeerd) worden oranje gemarkeerd.
-
-## Weergaven
-
-- **Funnel-bord**: kolom per fase, kaarten verschuiven met ‹ ›
-- **Prioriteitenlijst**: open ideeën gerangschikt op score, te kopiëren naar Excel
-- **Impact × inspanning**: 5×5-matrix met quick wins linksboven
-
-## Techniek
-
-Eén bestand: `index.html` (geen build, geen libraries). Binnen claude.ai slaat de pagina ideeën op in de gedeelde database van het artifact (collectie `ideas`), live bijgewerkt voor alle kijkers. Lokaal geopend valt hij terug op opslag in de browser.
+```bash
+python -m unittest discover -s agridata-import/tests
+python -m unittest discover -s douane-agent/tests
+```
